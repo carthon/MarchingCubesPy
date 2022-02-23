@@ -119,7 +119,10 @@ window.push_handlers(key_handler)
 size = [20,20,20]
 start_time = time.time()
 index = 0
+start_time = time.time()
 value_map = perlin_noise_3d(size)
+end_time = time.time()
+print("Perlin Noise took: {} seconds.".format(end_time - start_time))
 #marching_cubes = Mesh(size=size, function=dist_two_points)
 marching_cubes = Mesh(size=size, value_map=value_map)
 

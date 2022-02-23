@@ -75,7 +75,7 @@ class Mesh():
         for grid_cell in self.grid_to_arr():
             for j, position in enumerate(grid_cell.cube_vertex):
                 grid_cell.value[j] = normalize(grid_cell.value[j], max_value, min_value)
-                print("CellValue: {}". format(grid_cell.value[j]))
+                #print("CellValue: {}". format(grid_cell.value[j]))
                 nvertex+=1
         print(nvertex)
 
