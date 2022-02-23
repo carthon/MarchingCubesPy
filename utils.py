@@ -30,12 +30,12 @@ def interpolate(isolevel, p1, p2, valp1, valp2):
     
     return [x,y,z]
 
-def perlin_noise_3d(size_vector, offset_vector):
+def perlin_noise_3d(size_vector):
+    if isinstance(size_vector, Vector3) is not True:
+        size_vector = Vector3.from_array(size_vector)
+    size_vector = size_vector * 8
     noise_xy = PerlinNoise(octaves=2, seed=time.time_ns())
     noise = PerlinNoise(octaves=6, seed=time.time_ns())
-    print(offset_vector)
-    print(size_vector)
-    size_vector = size_vector * 2
     pic = []
     for i in range(int(size_vector.x)):
         row_x = []
@@ -47,10 +47,8 @@ def perlin_noise_3d(size_vector, offset_vector):
                 row_y.append(noise_val)
             row_x.append(row_y)
         pic.append(row_x)
-    final_value = pic[int(offset_vector.x)][int(offset_vector.y)][int(offset_vector.z)]
-    print(final_value)
-    return final_value
+    return pic
     #plt.imshow(pic, cmap='gray')
     #plt.show()
     
-#perlin_noise_3d(size_vector=Vector3(100, 100, 1), offset_vector=0)
+#perlin_noise_3d(size_vector=Vector3(7, 7, 1))

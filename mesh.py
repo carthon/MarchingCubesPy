@@ -8,6 +8,7 @@ from vector3 import Vector3
 from utils import dist_two_points, interpolate, normalize
 import triangleconnectiontable
 from triangle import Triangle
+from math import floor
 
 class Cube():
     def __init__(self, position=Vector3()):
@@ -32,13 +33,13 @@ class Cube():
 
 
 class Mesh():
-    def __init__(self, isolevel=0.4, grid = Cube(), size = [1,1,1], position = Vector3(), values_function = dist_two_points):
+    def __init__(self, isolevel=0.4, grid=Cube(), size = [1,1,1], position = Vector3(), function=None, value_map = None):
         self.isolevel = isolevel
         self.size = Vector3.from_array(size)
         self.grid = []
         self.position = position
         self.create_cubes()
-        self.calculate_values(values_function)
+        self.calculate_values(function=function, value_map=value_map)
         self.compute_mesh()
     
     def create_cubes(self):
@@ -50,22 +51,33 @@ class Mesh():
                     pos = (self.position + Vector3(x,y,z)) - (Vector3(self.size.x, self.size.y, self.size.z) / 2)
                     self.grid[x][y].append(Cube(pos))
                 
-    def calculate_values(self, function):
+    def calculate_values(self, function = None, value_map = None):
         values = []
         max_value = 0
         min_value = 99999
-        for i, grid_cell in enumerate(self.grid_to_arr()):
-            for j, position in enumerate(grid_cell.cube_vertex):
-                value_cell = 0 if function(position, self.position) == 0 else function(position, self.position)
-                values.append(value_cell)
-                if value_cell < min_value:
-                    min_value = value_cell
-                if value_cell > max_value:
-                    max_value = value_cell
-                grid_cell.value[j]= value_cell
+        for x in range(self.size.x):
+            for y in range(self.size.y):
+                for z in range(self.size.z):
+                    grid_cell = self.grid[x][y][z]
+                    for j, position in enumerate(grid_cell.cube_vertex):
+                        if function is not None:
+                            value_cell = 0 if function(position, self.position) == 0 else function(position, self.position)
+                        else:
+                            value_cell = value_map[floor(position.x)][floor(position.y)][floor(position.z)]
+                        values.append(value_cell)
+                        if value_cell < min_value:
+                            min_value = value_cell
+                        if value_cell > max_value:
+                            max_value = value_cell
+                        grid_cell.value[j]= value_cell
+        print("Max: {} Min: {}".format(max_value, min_value))
+        nvertex = 0
         for grid_cell in self.grid_to_arr():
             for j, position in enumerate(grid_cell.cube_vertex):
                 grid_cell.value[j] = normalize(grid_cell.value[j], max_value, min_value)
+                print("CellValue: {}". format(grid_cell.value[j]))
+                nvertex+=1
+        print(nvertex)
 
     def compute_mesh(self):
         for cell in self.grid_to_arr():

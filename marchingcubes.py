@@ -8,7 +8,7 @@ Created on Tue Feb 15 17:56:49 2022
 import pyglet
 from pyglet.gl import *
 from pyglet.window import key
-from utils import perlin_noise_3d
+from utils import perlin_noise_3d, dist_two_points
 import time
 from mesh import Mesh
 
@@ -102,7 +102,7 @@ def update(dt):
     
     end_time = time.time()
     if end_time - start_time > 0.2:
-        if index < len(marching_cubes.grid_to_arr() - 1):
+        if index < len(marching_cubes.grid_to_arr()) - 1:
             start_time = time.time()
             index += 1
     
@@ -116,10 +116,12 @@ pyglet.gl.glClearColor(0.5,0.5,0.5,1)
 pyglet.clock.schedule_interval(update, 1/120.0)
 key_handler = key.KeyStateHandler()
 window.push_handlers(key_handler)
-size = [7,7,7]
+size = [20,20,20]
 start_time = time.time()
 index = 0
-marching_cubes = Mesh(size=size)
+value_map = perlin_noise_3d(size)
+#marching_cubes = Mesh(size=size, function=dist_two_points)
+marching_cubes = Mesh(size=size, value_map=value_map)
 
 @window.event
 def on_draw():
@@ -132,7 +134,7 @@ def on_draw():
     glTranslatef(*pos)
     glRotatef(rot_x, 1, 0, 0)
     glRotatef(rot_y, 0, 1, 0)
-    draw_index(marching_cubes,index)
+    draw(marching_cubes)
     #glPopMatrix()
     
     glFlush()
