@@ -5,6 +5,11 @@ Created on Thu Sep  9 13:22:15 2021
 @author: Mortimer
 """
 
+cube_vertex = [
+        [-1,-1,-1],[1,-1,-1],[1,-1,1],[-1,-1,1],
+        [-1,1,-1],[1,1,-1],[1,1,1],[-1,1,1]
+    ]
+
 # <summary>
 # EdgeConnection lists the index of the endpoint vertices for each 
 # of the 12 edges of the cube.
