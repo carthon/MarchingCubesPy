@@ -5,7 +5,7 @@ Created on Wed Feb 23 17:17:12 2022
 @author: Mortimer
 """
 from vector3 import Vector3
-from utils import dist_two_points, interpolate, normalize
+from utils import dist_two_points, interpolate, normalize, density_function
 import triangleconnectiontable
 from triangle import Triangle
 from math import floor
@@ -14,7 +14,7 @@ class Cube():
     def __init__(self, position=Vector3()):
         self.cube_vertex = [Vector3()] * 8
         self.value = [float(0)] * 8
-        self.triangles = [] * 5
+        self.triangles = []
         self.triangles_edges = []
         self.vertex_list = [0] * 12
         for i in range(8):
@@ -30,7 +30,6 @@ class Cube():
     def __iter__(self):
         for i in self.cube_vertex:
             yield i.to_arr()
-
 
 class Mesh():
     def __init__(self, isolevel=0.4, grid=Cube(), size = [1,1,1], position = Vector3(), function=None, value_map = None):
@@ -63,7 +62,7 @@ class Mesh():
                         if function is not None:
                             value_cell = 0 if function(position, self.position) == 0 else function(position, self.position)
                         else:
-                            value_cell = value_map[floor(position.x)][floor(position.y)][floor(position.z)]
+                            value_cell = density_function(position, self.size.y/3, value_map)
                         values.append(value_cell)
                         if value_cell < min_value:
                             min_value = value_cell
